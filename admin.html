@@ -1,0 +1,243 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Yönetim Paneli | AB Reklamcılık</title>
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&family=Oswald:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#2b2b2d;--gold:#C9A45C;--gold-d:#a8843d;--line:#e3e3e3;--muted:#7a7a7e;--bg:#f4f4f4;--grad:linear-gradient(135deg,#E6CF9E,#C9A45C 50%,#a8843d)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Open Sans',sans-serif;background:var(--bg);color:#3b3b3e;min-height:100vh;line-height:1.55}
+h1,h2,h3{font-family:'Oswald',sans-serif;font-weight:300;color:var(--ink)}
+[hidden]{display:none!important}
+button,input,select{font:inherit}
+.btn{border:0;cursor:pointer;padding:10px 20px;border-radius:50px;font-family:'Oswald',sans-serif;letter-spacing:.12em;text-transform:uppercase;font-size:.8rem;background:var(--grad);color:#1d1d1f;transition:.2s}
+.btn:hover{filter:brightness(1.06);transform:translateY(-1px)}
+.btn:disabled{opacity:.6;cursor:wait}
+.btn.ghost{background:#fff;border:1px solid #d0d0d3;color:var(--ink)}
+.btn.danger{background:#fff;border:1px solid #e0b4b0;color:#b3261e}
+.btn.sm{padding:6px 14px;font-size:.72rem}
+input,select{padding:11px 14px;border:1px solid #d6d6d8;border-radius:10px;background:#fff;width:100%}
+input:focus,select:focus{outline:0;border-color:var(--gold);box-shadow:0 0 0 4px rgba(201,164,92,.2)}
+label{display:block;font-family:'Oswald',sans-serif;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;margin:14px 0 6px;color:var(--ink)}
+
+/* login */
+#login{min-height:100vh;display:grid;place-items:center;padding:20px;background:radial-gradient(circle at 85% 0,rgba(201,164,92,.22),transparent 50%),#242426}
+.box{background:#fff;border-radius:20px;padding:40px 34px;width:min(420px,100%);box-shadow:0 30px 70px -20px rgba(0,0,0,.6)}
+.box img{height:56px;margin:0 auto 6px;display:block}
+.box h1{text-align:center;font-size:1.7rem;margin-bottom:4px}
+.box p.sub{text-align:center;color:var(--muted);font-size:.9rem;margin-bottom:10px}
+.box .btn{width:100%;margin-top:22px;padding:13px}
+.err{color:#b3261e;font-size:.88rem;margin-top:12px;min-height:1.2em}
+.ok{color:#2e7d32}
+
+/* app */
+header.bar{background:var(--ink);color:#fff;padding:14px 0}
+.wrap{width:min(1200px,94%);margin-inline:auto}
+.bar .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.bar .who{display:flex;align-items:center;gap:12px}
+.bar .who img{height:38px}
+.bar .who span{font-family:'Oswald',sans-serif;letter-spacing:.3em;font-weight:200;font-size:.95rem}
+.bar .acts{display:flex;gap:10px;align-items:center;font-size:.85rem;color:#c9c9cc;flex-wrap:wrap}
+main{padding:30px 0 70px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:22px}
+.stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 18px;cursor:pointer;transition:.2s}
+.stat:hover,.stat.on{border-color:var(--gold);box-shadow:0 8px 24px -14px rgba(0,0,0,.4)}
+.stat b{display:block;font-family:'Oswald',sans-serif;font-weight:300;font-size:2rem;color:var(--ink);line-height:1}
+.stat span{font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.tools{display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.tools input{flex:1;min-width:200px}
+.tools select{width:auto}
+.list{display:grid;gap:12px}
+.item{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 20px;border-left:4px solid var(--gold)}
+.item[data-s=yeni]{border-left-color:#d4380d}
+.item[data-s=kapandi]{border-left-color:#9a9a9e;opacity:.8}
+.item[data-s=kazanildi]{border-left-color:#2e7d32}
+.row1{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;align-items:flex-start}
+.name{font-family:'Oswald',sans-serif;font-size:1.25rem;color:var(--ink)}
+.firm{color:var(--muted);font-size:.9rem}
+.meta{font-size:.85rem;color:var(--muted)}
+.contact{display:flex;gap:18px;flex-wrap:wrap;margin:10px 0;font-size:.92rem}
+.contact a{color:var(--gold-d);font-weight:600;text-decoration:none}
+.contact a:hover{text-decoration:underline}
+.svc{display:inline-block;background:var(--ink);color:#E6CF9E;padding:2px 12px;border-radius:50px;font-size:.78rem;margin-bottom:8px}
+.msg{white-space:pre-wrap;background:#fafafa;border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:.92rem;margin-bottom:12px}
+.ctl{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.ctl select{width:auto;padding:7px 12px}
+.empty{text-align:center;padding:60px 20px;color:var(--muted)}
+dialog{border:0;border-radius:18px;padding:30px;width:min(400px,92%);box-shadow:0 30px 70px rgba(0,0,0,.4);margin:auto}
+dialog::backdrop{background:rgba(0,0,0,.55)}
+dialog .btns{display:flex;gap:10px;margin-top:20px}
+dialog .btns .btn{flex:1;margin:0}
+</style>
+</head>
+<body>
+
+<section id="login" hidden>
+  <form class="box" id="login-form">
+    <img src="assets/img/ab-mark.svg" alt="AB">
+    <h1>Yönetim Paneli</h1>
+    <p class="sub">Yalnızca yetkili kullanıcılar içindir</p>
+    <label for="em">E-posta</label>
+    <input id="em" type="email" autocomplete="username" required>
+    <label for="pw">Şifre</label>
+    <input id="pw" type="password" autocomplete="current-password" required>
+    <button class="btn" type="submit" id="login-btn">Giriş Yap</button>
+    <div class="err" id="login-err" role="alert"></div>
+  </form>
+</section>
+
+<div id="app" hidden>
+  <header class="bar"><div class="wrap">
+    <div class="who"><img src="assets/img/ab-mark-light.svg" alt=""><span>REKLAMCILIK · YÖNETİM</span></div>
+    <div class="acts"><span id="user-email"></span>
+      <button class="btn ghost sm" id="btn-pw">Şifre Değiştir</button>
+      <button class="btn ghost sm" id="btn-out">Çıkış</button></div>
+  </div></header>
+
+  <main class="wrap">
+    <h2 style="font-size:2rem;margin-bottom:18px">Teklif Talepleri</h2>
+    <div class="cards" id="cards"></div>
+    <div class="tools">
+      <input id="q" type="search" placeholder="Ad, firma, telefon, e-posta veya mesajda ara...">
+      <select id="filter"><option value="">Tüm durumlar</option></select>
+      <button class="btn ghost" id="btn-csv">CSV İndir</button>
+      <button class="btn" id="btn-refresh">Yenile</button>
+    </div>
+    <div class="list" id="list"></div>
+  </main>
+</div>
+
+<dialog id="dlg-pw">
+  <form method="dialog" id="pw-form">
+    <h3 style="font-size:1.5rem">Şifre Değiştir</h3>
+    <label for="np">Yeni şifre (en az 10 karakter)</label>
+    <input id="np" type="password" minlength="10" autocomplete="new-password" required>
+    <label for="np2">Yeni şifre (tekrar)</label>
+    <input id="np2" type="password" minlength="10" autocomplete="new-password" required>
+    <div class="err" id="pw-err"></div>
+    <div class="btns"><button class="btn ghost" type="button" id="pw-cancel">Vazgeç</button><button class="btn" type="submit">Kaydet</button></div>
+  </form>
+</dialog>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function () {
+  'use strict';
+  var SB_URL = 'https://iexwdjvxsuofdctnvmkh.supabase.co', SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlleHdkanZ4c3VvZmRjdG52bWtoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTExMTUzMDIsImV4cCI6MjEwNjY5MTMwMn0.Oc12f-kG_nwpG9YZc-bsaVqNaw4Jr2SQ_9FTyGkwzA0';
+  var STATUS = { 'yeni': 'Yeni', 'arandi': 'Arandı', 'teklif verildi': 'Teklif Verildi', 'kazanildi': 'Kazanıldı', 'kapandi': 'Kapandı' };
+  var sb = window.supabase.createClient(SB_URL, SB_KEY, { auth: { persistSession: true, autoRefreshToken: true } });
+  var $ = function (id) { return document.getElementById(id); };
+  var rows = [], activeStatus = '';
+
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+  function fmt(d) { return new Date(d).toLocaleString('tr-TR', { dateStyle: 'medium', timeStyle: 'short' }); }
+
+  function show(authed, user) {
+    $('login').hidden = authed; $('app').hidden = !authed;
+    if (authed) { $('user-email').textContent = user.email; load(); }
+  }
+
+  sb.auth.getSession().then(function (r) { show(!!r.data.session, r.data.session && r.data.session.user); });
+  sb.auth.onAuthStateChange(function (ev, s) { if (ev === 'SIGNED_OUT') show(false); });
+
+  $('login-form').addEventListener('submit', function (e) {
+    e.preventDefault(); var b = $('login-btn'), err = $('login-err'); b.disabled = true; err.textContent = '';
+    sb.auth.signInWithPassword({ email: $('em').value.trim(), password: $('pw').value }).then(function (r) {
+      b.disabled = false;
+      if (r.error) { err.textContent = 'E-posta veya şifre hatalı.'; return; }
+      $('pw').value = ''; show(true, r.data.user);
+    });
+  });
+  $('btn-out').addEventListener('click', function () { sb.auth.signOut(); });
+
+  // password change
+  $('btn-pw').addEventListener('click', function () { $('pw-err').textContent = ''; $('pw-form').reset(); $('dlg-pw').showModal(); });
+  $('pw-cancel').addEventListener('click', function () { $('dlg-pw').close(); });
+  $('pw-form').addEventListener('submit', function (e) {
+    e.preventDefault(); var a = $('np').value, b = $('np2').value, err = $('pw-err'); err.className = 'err';
+    if (a !== b) { err.textContent = 'Şifreler eşleşmiyor.'; return; }
+    sb.auth.updateUser({ password: a }).then(function (r) {
+      if (r.error) { err.textContent = 'Şifre güncellenemedi: ' + r.error.message; return; }
+      $('dlg-pw').close(); alert('Şifreniz güncellendi.');
+    });
+  });
+
+  // data
+  function load() {
+    sb.from('quotes').select('*').order('created_at', { ascending: false }).then(function (r) {
+      if (r.error) { $('list').replaceChildren(el('div', 'empty', 'Veriler alınamadı: ' + r.error.message)); return; }
+      rows = r.data || []; render();
+    });
+  }
+  function counts() {
+    var c = { all: rows.length }; Object.keys(STATUS).forEach(function (k) { c[k] = 0; });
+    rows.forEach(function (x) { c[x.durum] = (c[x.durum] || 0) + 1; }); return c;
+  }
+  function render() {
+    var c = counts(), cards = $('cards'); cards.replaceChildren();
+    [['', 'Tümü', c.all]].concat(Object.keys(STATUS).map(function (k) { return [k, STATUS[k], c[k]]; })).forEach(function (t) {
+      var d = el('div', 'stat' + (activeStatus === t[0] ? ' on' : '')); d.appendChild(el('b', '', t[2])); d.appendChild(el('span', '', t[1]));
+      d.addEventListener('click', function () { activeStatus = t[0]; $('filter').value = t[0]; render(); }); cards.appendChild(d);
+    });
+    var q = $('q').value.trim().toLocaleLowerCase('tr'), list = $('list'); list.replaceChildren();
+    var f = rows.filter(function (x) {
+      if (activeStatus && x.durum !== activeStatus) return false;
+      return !q || [x.ad, x.firma, x.telefon, x.eposta, x.hizmet, x.mesaj].join(' ').toLocaleLowerCase('tr').indexOf(q) > -1;
+    });
+    if (!f.length) { list.appendChild(el('div', 'empty', rows.length ? 'Aramanıza uygun talep yok.' : 'Henüz teklif talebi gelmedi.')); return; }
+    f.forEach(function (x) { list.appendChild(item(x)); });
+  }
+  function item(x) {
+    var it = el('article', 'item'); it.dataset.s = x.durum;
+    var r1 = el('div', 'row1'), l = el('div'); l.appendChild(el('div', 'name', x.ad)); if (x.firma) l.appendChild(el('div', 'firm', x.firma));
+    r1.appendChild(l); r1.appendChild(el('div', 'meta', fmt(x.created_at))); it.appendChild(r1);
+    var c = el('div', 'contact'), a = el('a', '', x.telefon); a.href = 'tel:' + x.telefon.replace(/[^\d+]/g, ''); c.appendChild(a);
+    var m = el('a', '', x.eposta); m.href = 'mailto:' + x.eposta; c.appendChild(m);
+    var w = el('a', '', 'WhatsApp'); var n = x.telefon.replace(/\D/g, ''); if (n.charAt(0) === '0') n = '90' + n.slice(1); else if (n.length === 10) n = '90' + n;
+    w.href = 'https://wa.me/' + n; w.target = '_blank'; w.rel = 'noopener'; c.appendChild(w); it.appendChild(c);
+    if (x.hizmet) it.appendChild(el('span', 'svc', x.hizmet));
+    if (x.mesaj) it.appendChild(el('div', 'msg', x.mesaj));
+    var ctl = el('div', 'ctl'), s = el('select');
+    Object.keys(STATUS).forEach(function (k) { var o = el('option', '', STATUS[k]); o.value = k; if (k === x.durum) o.selected = true; s.appendChild(o); });
+    s.addEventListener('change', function () {
+      sb.from('quotes').update({ durum: s.value }).eq('id', x.id).then(function (r) {
+        if (r.error) { alert('Güncellenemedi: ' + r.error.message); s.value = x.durum; return; }
+        x.durum = s.value; render();
+      });
+    });
+    var del = el('button', 'btn danger sm', 'Sil'); del.type = 'button';
+    del.addEventListener('click', function () {
+      if (!confirm(x.ad + ' adlı talebi kalıcı olarak silmek istiyor musunuz?')) return;
+      sb.from('quotes').delete().eq('id', x.id).then(function (r) {
+        if (r.error) { alert('Silinemedi: ' + r.error.message); return; }
+        rows = rows.filter(function (y) { return y.id !== x.id; }); render();
+      });
+    });
+    ctl.appendChild(s); ctl.appendChild(del); it.appendChild(ctl); return it;
+  }
+
+  var fs = $('filter'); Object.keys(STATUS).forEach(function (k) { var o = el('option', '', STATUS[k]); o.value = k; fs.appendChild(o); });
+  fs.addEventListener('change', function () { activeStatus = fs.value; render(); });
+  $('q').addEventListener('input', render);
+  $('btn-refresh').addEventListener('click', load);
+
+  $('btn-csv').addEventListener('click', function () {
+    var esc = function (v) { v = v == null ? '' : String(v); if (/^[=+\-@]/.test(v)) v = "'" + v; return '"' + v.replace(/"/g, '""') + '"'; };
+    var head = ['Tarih', 'Ad Soyad', 'Firma', 'Telefon', 'E-posta', 'Hizmet', 'Mesaj', 'Durum'];
+    var lines = [head.map(esc).join(';')].concat(rows.map(function (x) {
+      return [fmt(x.created_at), x.ad, x.firma, x.telefon, x.eposta, x.hizmet, x.mesaj, STATUS[x.durum] || x.durum].map(esc).join(';');
+    }));
+    var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(['﻿' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' }));
+    a.download = 'teklif-talepleri-' + new Date().toISOString().slice(0, 10) + '.csv'; a.click(); URL.revokeObjectURL(a.href);
+  });
+})();
+</script>
+</body>
+</html>
+
