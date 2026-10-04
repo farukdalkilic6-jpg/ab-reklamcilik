@@ -89,6 +89,30 @@ dialog .btns .btn{flex:1;margin:0}
     <input id="pw" type="password" autocomplete="current-password" required>
     <button class="btn" type="submit" id="login-btn">Giriş Yap</button>
     <div class="err" id="login-err" role="alert"></div>
+    <p style="text-align:center;margin-top:14px"><a href="#" id="to-forgot" style="color:var(--gold-d);font-size:.9rem">Şifremi unuttum</a></p>
+  </form>
+
+  <form class="box" id="forgot-form" hidden>
+    <img src="assets/img/ab-mark.svg" alt="AB">
+    <h1>Şifremi Unuttum</h1>
+    <p class="sub">E-posta adresinizi yazın, size şifre sıfırlama bağlantısı gönderelim.</p>
+    <label for="fem">E-posta</label>
+    <input id="fem" type="email" autocomplete="username" required>
+    <button class="btn" type="submit" id="forgot-btn">Bağlantı Gönder</button>
+    <div class="err" id="forgot-msg" role="alert"></div>
+    <p style="text-align:center;margin-top:14px"><a href="#" class="to-login" style="color:var(--gold-d);font-size:.9rem">← Girişe dön</a></p>
+  </form>
+
+  <form class="box" id="recover-form" hidden>
+    <img src="assets/img/ab-mark.svg" alt="AB">
+    <h1>Yeni Şifre Belirle</h1>
+    <p class="sub">En az 10 karakterlik yeni bir şifre seçin.</p>
+    <label for="rp">Yeni şifre</label>
+    <input id="rp" type="password" minlength="10" autocomplete="new-password" required>
+    <label for="rp2">Yeni şifre (tekrar)</label>
+    <input id="rp2" type="password" minlength="10" autocomplete="new-password" required>
+    <button class="btn" type="submit" id="recover-btn">Şifreyi Kaydet</button>
+    <div class="err" id="recover-msg" role="alert"></div>
   </form>
 </section>
 
@@ -143,8 +167,48 @@ dialog .btns .btn{flex:1;margin:0}
     if (authed) { $('user-email').textContent = user.email; load(); }
   }
 
-  sb.auth.getSession().then(function (r) { show(!!r.data.session, r.data.session && r.data.session.user); });
-  sb.auth.onAuthStateChange(function (ev, s) { if (ev === 'SIGNED_OUT') show(false); });
+  // password recovery: the emailed link returns here with #...type=recovery
+  var recovering = /type=recovery/.test(location.hash) || /error_code=/.test(location.hash);
+  var linkError = /error_code=/.test(location.hash);
+  function panel(name) {
+    ['login-form', 'forgot-form', 'recover-form'].forEach(function (id) { $(id).hidden = id !== name; });
+  }
+  function showRecovery() { $('login').hidden = false; $('app').hidden = true; panel('recover-form'); }
+
+  sb.auth.getSession().then(function (r) {
+    if (linkError) { show(false); $('login-err').textContent = 'Sıfırlama bağlantısı geçersiz veya süresi dolmuş. Lütfen yeniden isteyin.'; history.replaceState(null, '', location.pathname); return; }
+    if (recovering && r.data.session) { showRecovery(); return; }
+    show(!!r.data.session, r.data.session && r.data.session.user);
+  });
+  sb.auth.onAuthStateChange(function (ev) {
+    if (ev === 'PASSWORD_RECOVERY') { recovering = true; showRecovery(); }
+    else if (ev === 'SIGNED_OUT') { recovering = false; show(false); }
+  });
+
+  $('to-forgot').addEventListener('click', function (e) { e.preventDefault(); $('fem').value = $('em').value; $('forgot-msg').textContent = ''; panel('forgot-form'); });
+  document.querySelector('.to-login').addEventListener('click', function (e) { e.preventDefault(); panel('login-form'); });
+
+  $('forgot-form').addEventListener('submit', function (e) {
+    e.preventDefault(); var b = $('forgot-btn'), m = $('forgot-msg'); b.disabled = true; m.className = 'err'; m.textContent = '';
+    sb.auth.resetPasswordForEmail($('fem').value.trim(), { redirectTo: location.origin + location.pathname.replace(/admin\.html$/, '') }).then(function (r) {
+      b.disabled = false;
+      if (r.error && r.error.status === 429) { m.textContent = 'Çok sık denediniz. Lütfen biraz bekleyip tekrar deneyin.'; return; }
+      // hesap var/yok bilgisini sızdırmamak için her durumda aynı mesaj
+      m.className = 'err ok'; m.textContent = 'Bu e-posta kayıtlıysa, şifre sıfırlama bağlantısı gönderildi. Gelen kutunuzu (ve spam klasörünü) kontrol edin.';
+    });
+  });
+
+  $('recover-form').addEventListener('submit', function (e) {
+    e.preventDefault(); var a = $('rp').value, b = $('rp2').value, m = $('recover-msg'); m.className = 'err'; m.textContent = '';
+    if (a !== b) { m.textContent = 'Şifreler eşleşmiyor.'; return; }
+    $('recover-btn').disabled = true;
+    sb.auth.updateUser({ password: a }).then(function (r) {
+      $('recover-btn').disabled = false;
+      if (r.error) { m.textContent = 'Şifre güncellenemedi: ' + r.error.message; return; }
+      recovering = false; history.replaceState(null, '', location.pathname);
+      sb.auth.getSession().then(function (s) { panel('login-form'); show(true, s.data.session.user); });
+    });
+  });
 
   $('login-form').addEventListener('submit', function (e) {
     e.preventDefault(); var b = $('login-btn'), err = $('login-err'); b.disabled = true; err.textContent = '';

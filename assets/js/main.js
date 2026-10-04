@@ -1,6 +1,12 @@
 ﻿(function () {
   'use strict';
 
+  // Supabase password-recovery links land on the site root; forward them to the admin panel.
+  if (/type=recovery|error_code=/.test(location.hash) && !/admin\.html$/.test(location.pathname)) {
+    location.replace('admin.html' + location.hash);
+    return;
+  }
+
   var PHONE = '+90 212 216 05 92', PHONE_RAW = '+902122160592';
   var MOBILE = '+90 532 235 46 36', MOBILE_RAW = '+905322354636', WA = '905322354636';
   var EMAIL = 'aylinbingol@abreklamcilik.com';
