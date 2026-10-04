@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 120" fill="none">
+  <!-- A -->
+  <path d="M2 118 L40 4" stroke="#f1f1f1" stroke-width="7" stroke-linecap="butt"/>
+  <path d="M40 2 V118" stroke="#f1f1f1" stroke-width="9"/>
+  <path d="M16 70 H40" stroke="#f1f1f1" stroke-width="5"/>
+  <!-- B -->
+  <path d="M50 4 V116 H66 C80 116 90 100 90 82 C90 68 84 62 78 60 C84 56 88 48 88 36 C88 18 80 4 64 4 Z" stroke="#C9A45C" stroke-width="6" stroke-linejoin="round"/>
+  <path d="M50 60 H72" stroke="#C9A45C" stroke-width="5"/>
+</svg>
