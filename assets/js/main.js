@@ -1,4 +1,4 @@
-(function () {
+﻿(function () {
   'use strict';
 
   var PHONE = '+90 212 216 05 92', PHONE_RAW = '+902122160592';
@@ -161,15 +161,29 @@
   }, { threshold: .5 });
   document.querySelectorAll('[data-count]').forEach(function (el) { cio ? cio.observe(el) : (el.textContent = el.getAttribute('data-count') + (el.getAttribute('data-suffix') || '')); });
 
-  // quote form -> mailto
+  // quote form -> Supabase REST API (anon key is public by design; table is insert-only via RLS)
+  var SB_URL = 'https://iexwdjvxsuofdctnvmkh.supabase.co', SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlleHdkanZ4c3VvZmRjdG52bWtoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTExMTUzMDIsImV4cCI6MjEwNjY5MTMwMn0.Oc12f-kG_nwpG9YZc-bsaVqNaw4Jr2SQ_9FTyGkwzA0';
   var form = document.getElementById('quote-form');
   if (form) {
+    var note = document.getElementById('form-note'), btn = form.querySelector('button[type=submit]');
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       var d = new FormData(form);
-      var body = 'Ad Soyad: ' + d.get('ad') + '\nFirma: ' + d.get('firma') + '\nTelefon: ' + d.get('tel') + '\nE-posta: ' + d.get('mail') + '\nHizmet: ' + d.get('hizmet') + '\n\nMesaj:\n' + d.get('mesaj');
-      location.href = 'mailto:' + EMAIL + '?subject=' + encodeURIComponent('Web Sitesi Teklif Talebi - ' + (d.get('hizmet') || 'Genel')) + '&body=' + encodeURIComponent(body);
-      var n = document.getElementById('form-note'); if (n) n.textContent = 'E-posta uygulamanız açıldı. Gönder’e basarak talebinizi iletebilirsiniz; en kısa sürede dönüş yapacağız.';
+      if (d.get('website')) return; // honeypot
+      var row = { ad: d.get('ad'), firma: d.get('firma') || null, telefon: d.get('tel'), eposta: d.get('mail'), hizmet: d.get('hizmet') || null, mesaj: d.get('mesaj') || null };
+      btn.disabled = true; note.style.color = ''; note.textContent = 'Gönderiliyor...';
+      fetch(SB_URL + '/rest/v1/quotes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY, Prefer: 'return=minimal' },
+        body: JSON.stringify(row)
+      }).then(function (r) {
+        if (!r.ok) throw new Error(r.status);
+        form.reset(); note.style.color = '#2e7d32';
+        note.textContent = 'Talebiniz alındı. En kısa sürede sizinle iletişime geçeceğiz. Teşekkür ederiz!';
+      }).catch(function () {
+        note.style.color = '#b3261e';
+        note.innerHTML = 'Gönderilemedi. Lütfen bizi arayın: <a href="tel:' + PHONE_RAW + '">' + PHONE + '</a> veya <a href="mailto:' + EMAIL + '">e-posta</a> gönderin.';
+      }).finally(function () { btn.disabled = false; });
     });
   }
 })();
